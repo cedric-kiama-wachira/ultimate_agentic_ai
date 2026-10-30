@@ -5,7 +5,10 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "google-genai>=2.33.0",
+    "groq>=1.7.0",
     "ipykernel>=7.4.0",
+    "openai>=3.37.0",
     "python-dotenv>=1.2.4",
 ]
 
