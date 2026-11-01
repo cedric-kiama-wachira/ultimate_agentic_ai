@@ -1,0 +1,30 @@
+[project]
+name = "api"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "cedric-kiama-wachira", email = "cedric.kiama@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.162.0",
+    "google-genai>=2.33.0",
+    "groq>=1.7.0",
+    "openai>=3.37.0",
+    "pydantic>=2.14.1",
+    "pydantic-settings>=2.16.1",
+    "uvicorn>=0.54.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.13.0,<0.14.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+shared = { workspace = true }
+
+[tool.uv.build-backend]
+module-name = "api"
+module-root = "src"
+source-include = ["tests/**"]
