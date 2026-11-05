@@ -26,4 +26,5 @@ exclude-newer = "7 days"
 [tool.uv.workspace]
 members = [
     "apps/api",
+    "apps/chatbot_ui",
 ]

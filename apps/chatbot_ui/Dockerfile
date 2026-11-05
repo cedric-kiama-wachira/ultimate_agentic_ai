@@ -2,33 +2,33 @@ FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
 WORKDIR /app
 
-# Enable bytecode compilation and Python optimization
-
-ENV UV_COMPILE_BYTECODE=1
-ENV PYTHONOPTIMIZE=1
-ENV UV_LINK_MODE=copy 
-
-# Set the Python path to include the src directory for imports:
-
-ENV PYTHONPATH="/app/src:$PYTHONPATH"
-
 # Copy only the dependency files first for better caching:
 
 COPY pyproject.toml uv.lock ./
 
-# Install the required dependencies:
-
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-dev
-
 # Copy the application code:
 
-COPY src ./src/
+COPY apps/chatbot_ui ./apps/chatbot_ui
+
+# Enable bytecode compilation and Python optimization
+
+ENV UV_COMPILE_BYTECODE=1 
+
+# Install dependencies including the workspace packages:
+
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev --package chatbot_ui
+
+# Enable bytecode compilation and Python optimization.
+ENV PYTHONOPTIMIZE=1
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
 
 # Set the path to use the virtual environment:
 
 ENV PATH="/app/.venv/bin:$PATH" \
     STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
+ENV PYTHONPATH="/app/apps/chatbot_ui/src:$PYTHONPATH"
 
 # Create a group plus a non root user and relevant directories with proper permissions:
 
@@ -44,16 +44,18 @@ RUN addgroup --system app && \
 
 # Set home directory for the user:
 
-    ENV HOME=/home/app
+ENV HOME=/home/app
 
 # Switch to non root user:
     
-    USER app
+USER app
 
 # Expose the port for the Streamlit app:
 
-    EXPOSE 8501
+EXPOSE 8501
+
+WORKDIR /app/apps/chatbot_ui/src
 
 # Command to run the Streamlit app:
 
-    CMD [ "uv", "run", "streamlit", "run", "src/app.py", "--server.address=0.0.0.0", "--server.port=8501"]
+CMD [ "streamlit", "run", "chatbot_ui/app.py", "--server.address=0.0.0.0"]
